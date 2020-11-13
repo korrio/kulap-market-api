@@ -1,4 +1,5 @@
 const logger = require('./../utils/logger');
+const axios = require('axios')
 
 module.exports.healthcheck = (req, res) => {
   res.json({
@@ -9,13 +10,49 @@ module.exports.healthcheck = (req, res) => {
   });
 }
 
-module.exports.pairs = async (req, res) => {
+let getListed = async () => {
+  let url = `https://api.kulap.io/v1/api/assets/listed`;
+  let result = await axios.get(url);
+  return result.data;
+}
+
+module.exports.coins = async (req, res) => {
+
+  let listed_coins = await getListed();
+
   try {
-    res.status(200).json({
-      "ticker_id": "BTC_ETH",
-      "base": "BTC",
-      "target": "ETH",
-    });
+    res.status(200).json(listed_coins);
+  } catch (error) {
+    logger.error(`pairs error: ${error.message}`);
+    res.status(500).json({ status: 'error', message: error.message, statusCode: 500 });
+  }
+}
+
+module.exports.pairs = async (req, res) => {
+
+  let listed_coins = await getListed();
+  let pairs = [];
+  let main_coins = ["ETH","USDT"];
+  listed_coins.forEach((coin)=>{
+    console.log(coin);
+
+    main_coins.forEach((main_coin)=>{
+      pairs.push({
+        "ticker_id": `${main_coin}_${coin}`,
+        "base": main_coin,
+        "target": coin,
+      })
+    })
+    
+  })
+
+  try {
+    // res.status(200).json({
+    //   "ticker_id": "BTC_ETH",
+    //   "base": "BTC",
+    //   "target": "ETH",
+    // });
+    res.status(200).json(pairs);
   } catch (error) {
     logger.error(`pairs error: ${error.message}`);
     res.status(500).json({ status: 'error', message: error.message, statusCode: 500 });

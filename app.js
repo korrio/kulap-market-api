@@ -39,6 +39,7 @@ if (cluster.isMaster) {
     router.get('/transaction', sampleController.sampleTransaction);
 
     //market api endpoints
+    router.get('/api/coins',marketController.coins);
     router.get('/api/pairs',marketController.pairs);
     router.get('/api/tickers',marketController.tickers);
 
