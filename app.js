@@ -8,6 +8,9 @@ const bodyParser = require('body-parser');
 const healthcheckController = require('./controllers/controller-healthcheck');
 const sampleController = require('./controllers/controller-sample');
 
+//kulap's
+const marketController = require('./controllers/controller-market');
+
 if (cluster.isMaster) {
     // create a worker for each CPU
     for (let i = 0; i < numCPUs; i++) {
@@ -34,6 +37,15 @@ if (cluster.isMaster) {
     // sampleController routes
     router.get('/servertime', sampleController.getTime);
     router.get('/transaction', sampleController.sampleTransaction);
+
+    //market api endpoints
+    router.get('/api/pairs',marketController.pairs);
+    router.get('/api/tickers',marketController.tickers);
+
+    //example: .../api/orderbook?ticker_id=BTC_ETH&depth=200
+    router.get('/api/orderbook',marketController.orderbook);
+    //example: .../api/historical_trades?ticker_id=BTC_ETH&limit=10
+    router.get('/api/historical_trade',marketController.historical_trade);
 
     app.listen(config.port, function () {
         logger.info(`worker started: ${cluster.worker.id} | server listening on port: ${config.port}`);
