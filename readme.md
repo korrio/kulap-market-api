@@ -1,17 +1,13 @@
-# skeleton of a node.js / express / postgres app
-
-Uses the pg node package. Documenatation for that library is here: https://node-postgres.com/
-
-## create table in your Postgres DB: 
-create table test
-(testcolumn varchar(20));
-
-## Set the following ENV VARs for your DB Connections:
-export DB_USER=''  DB='' DB_PASS='' DB_HOST='' DB_PORT='' DB_MAX_CLIENTS='' DB_IDLE_TIMEOUT_MS=''
+# KULAP's market APIs
+```
+npm i
+npm run dev
+```
 
 ## Run locally
-http://localhost:3000/healthcheck and root return healthcheck
+curl http://localhost:3000/healthcheck and root return healthcheck
 
-http://localhost:3000/servertime - returns servertime
-
-http://localhost:3000/transaction - deletes then inserts into your DB using a transaction
+curl http://localhost:3000/api/pairs
+curl http://localhost:3000/api/tickers
+curl http://localhost:3000/api/orderbook?ticker_id=BTC_ETH&depth=200
+curl http://localhost:3000/api/historical_trades?ticker_id=BTC_ETH&limit=10
