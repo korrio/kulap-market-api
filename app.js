@@ -10,6 +10,7 @@ const sampleController = require('./controllers/controller-sample');
 
 //kulap's
 const marketController = require('./controllers/controller-market');
+const marketControllerCmc = require('./controllers/controller-market-cmc');
 
 if (cluster.isMaster) {
     // create a worker for each CPU
@@ -38,7 +39,7 @@ if (cluster.isMaster) {
     router.get('/servertime', sampleController.getTime);
     router.get('/transaction', sampleController.sampleTransaction);
 
-    //market api endpoints
+    //market api endpoints for coingecko
     router.get('/api/coins',marketController.coins);
     router.get('/api/pairs',marketController.pairs);
     router.get('/api/tickers',marketController.tickers);
@@ -47,6 +48,18 @@ if (cluster.isMaster) {
     router.get('/api/orderbook',marketController.orderbook);
     //example: .../api/historical_trades?ticker_id=BTC_ETH&limit=10
     router.get('/api/historical_trade',marketController.historical_trade);
+
+    //market api endpoints for coinmarketcap
+    //A0 summary 
+    router.get('/cmc-api/summary',marketControllerCmc.summary);
+    //A1 asset
+    router.get('/cmc-api/assets',marketControllerCmc.assets);
+    //A2 ticker
+    router.get('/cmc-api/ticker',marketControllerCmc.tickers);
+    //A3 orderbook -- reuse coingecko api
+    router.get('/cmc-api/orderbook/market_pair',marketController.orderbook);
+    //A4 trades -- reuse coingecko api
+    router.get('/cmc-api/trades/market_pair',marketController.historical_trade);
 
     app.listen(config.port, function () {
         logger.info(`worker started: ${cluster.worker.id} | server listening on port: ${config.port}`);
